@@ -418,7 +418,7 @@ conversions = ['Binary', 'Denary', 'Hex', 'Octal', 'BCD']
 
 #          (choice2,    choice3,                  choice4):
 def convert(input_base, output_base, num2convert, mode=None):
-    print('\n')
+    print('\n\n\n\n\n')
     num2convert = remove_space(num2convert) #removes spaces in input
     #checking if input was valid, calling right check function based on input using eval()
     valid = eval('check_' + conversions[input_base-1].lower() + '(num2convert)')
@@ -435,7 +435,7 @@ def convert(input_base, output_base, num2convert, mode=None):
     #-----------------------adding/ subtracting loop-------------------------#
 #       choice1, choice2,                          choice4
 def add(choice, input_base, first_num, second_num, mode=None):
-    print('\n')
+    print('\n\n\n\n\n')
     first_num = remove_space(first_num) #removes spaces in input
     valid1 = eval('check_' + conversions[input_base-1].lower() + '(first_num)')
     second_num = remove_space(second_num) #removes spaces in input

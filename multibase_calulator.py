@@ -1,3 +1,5 @@
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame as pg 
 from processing import *
 
@@ -124,8 +126,7 @@ last_delete = pg.time.get_ticks()
 delete_fast = False
 delete_wait = 300
 input_length = 22                                                                                         
-valid_chars = ['a','b','c','d','e','f', 'space', 'return']
-all_nums_valid = True
+valid_chars = ['a','b','c','d','e','f', 'space']
 
 first_num = None
 enter = False
@@ -134,8 +135,8 @@ previous_choice4 = 0
 show_result = False
 show_invalid = False
 invalid_length = 2500
-result_length = 20
-result_x = 455
+result_length = 26
+result_x = 462
 
 #--------------------------------- Main Program -------------------------------------#
 running = True
@@ -149,26 +150,26 @@ while running:
         if event.type == pg.KEYDOWN: #allows user to close window with shortcut LALT + Q
             if event.key == pg.K_q and pg.key.get_mods() & pg.KMOD_LALT:
                 running = False
-                
-                #--------------------------------taking input-----------------------------#
+
+            key_press = pg.key.name(event.key) #get name of key input
             try:
-                key_press = pg.key.name(event.key) #get name of key input
-                try:
-                    int(key_press) #check if its a number
-                    if not all_nums_valid:
-                        raise Exception
-                except:
-                    if key_press not in valid_chars:#check if input allowed
-                        key_press = ''
-                    if key_press == 'space': #special cases for enter and backspace
-                        key_press = ' '
+                int(key_press)
+
+            # if its not a number perform extra checks
+            except ValueError:
+                # allow minus sign if its the first character for denary to binary
+                if not (key_press == '-' and len(current_data)==0  and  choice2==1 and choice3==0):
+                    # set flag for submitting data if its enter
                     if key_press == 'return':
-                        key_press = ''
                         enter = True
-            except:
-                key_press = ''
-                
-            current_data += key_press #string addition
+                    # clear input if invalid
+                    if key_press not in valid_chars:
+                        key_press = ''
+                # convert space to input into a actual space
+                if key_press == 'space':
+                    key_press = ' '
+
+            current_data += key_press
         
         if event.type == pg.KEYUP:
             if event.key == pg.K_BACKSPACE: #so can check if backspace is held
@@ -242,7 +243,7 @@ while running:
         draw_text(' [Initial -------> Final] ', 24, 0, 40, LIGHT_BLUE, 'TL', GREY)
         draw_output_base_menu()
     else:
-        draw_text('[+/-  Base]', 22, 0, 40, BLUE, 'TL', LIGHT_BLUE)
+        draw_text('[+/-  Base]', 22, 0, 40, LIGHT_BLUE, 'TL', GREY)
     if choice1 == 0:
         if (choice2 == 0 or choice3 == 0) and (choice2 == 1 or choice3 == 1):
             draw_binary_options()
@@ -322,8 +323,8 @@ while running:
 
     if choice1 != 0: #if on add/sub mode number of chars shown n results increases and shifts a bit left as more room
         choice3 = None
-        result_length = 28 #do if display data > 20 or smth here
-        result_x = 425
+        result_length = 32 #do if display data > 20 or smth here
+        result_x = 415
         if choice2 == 0:
             if choice4 == None: #if just changed back to only binary for add/sub
                 choice4 = previous_choice4 #resets sm/2's to previous val
@@ -338,8 +339,8 @@ while running:
                 choice4 = previous_choice4 #resets sm/2's to previous val
                 
         if choice3 == None: #resets values to conversion mode ones
-            result_length = 29
-            result_x = 455
+            result_length = 26
+            result_x = 462
             if choice2 != previous_choice3:
                 choice3 = previous_choice3
             else:
@@ -356,12 +357,12 @@ while running:
                 all_fills[2][choice3] = GREEN
     
     if show_result:
-        results_msg = 'Result [' + conversions[display_base] + ']' #forming nice string to display result, showing which base its in
+        results_msg = 'Result [' + conversions[display_base] + '] =' #forming nice string to display result, showing which base its in
         draw_text(results_msg, 32, 450, 175, WHITE, 'CR', outline_colour=LIGHT_BLUE, thickness=3, button=False) #drawing result
         
-        result_str = '= '+ negative_string + str(result) #displays the word negative if they subtracted a bigger num from a smaller num
+        result_str = negative_string + str(result) #displays the word negative if they subtracted a bigger num from a smaller num
         if len(result_str) > result_length: #checks if the result is longer than the limit
-            result_str = result_str[:result_length] + '...' #shortens it if it is
+            result_str = result_str[:result_length-2] + '...' #shortens it if it is
         draw_text(result_str, 32, result_x, 220, WHITE, 'CR', outline_colour=LIGHT_BLUE, thickness=3, button=False) #draws result with msg
 
     if show_invalid:
